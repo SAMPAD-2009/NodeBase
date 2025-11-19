@@ -1,0 +1,6 @@
+procs:
+  inngest:
+   cmd:["mpm","run","inngest:dev"]
+
+  next:
+    cmd:["mpm","run","dev"]
