@@ -17,6 +17,12 @@ const page =   () => {
   const {data} = useQuery(trpc.getWorkflows.queryOptions());
   const queryClient = useQueryClient();
 
+  const testA1 = useMutation(trpc.testA1.mutationOptions({
+    onSuccess:()=>{
+      toast.success("workflow created");
+    }}
+  ));
+
   const create =useMutation(trpc.createWorkflow.mutationOptions({
     onSuccess:()=>{
       toast.success("workflow created");
@@ -29,6 +35,9 @@ const page =   () => {
       <div className="w-full max-w-md">
         {JSON.stringify(data,null,2)}
       </div>
+      <Button disabled={testA1.isPending} onClick={()=>testA1.mutate()}>
+        test a1
+      </Button>
       <Button disabled={create.isPending} onClick={()=>create.mutate()}>
         create workflow
       </Button>
