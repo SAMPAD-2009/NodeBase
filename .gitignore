@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+mprocs.log
 
 # next.js
 /.next/
