@@ -20,7 +20,11 @@ const page =   () => {
   const testA1 = useMutation(trpc.testA1.mutationOptions({
     onSuccess:()=>{
       toast.success("workflow created");
-    }}
+    },
+    onError:()=>{
+      toast.error("Something went wrong");
+    }
+  }
   ));
 
   const create =useMutation(trpc.createWorkflow.mutationOptions({
