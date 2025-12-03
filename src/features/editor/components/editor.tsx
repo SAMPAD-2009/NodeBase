@@ -9,6 +9,7 @@ import { nodeComponents } from "@/config/node-components";
 import { AddNodeButton } from "./add-node-button";
 import { useSetAtom } from "jotai";
 import { editorAtom } from "../store/atoms";
+import { useTheme } from "next-themes";
 
 export const EditorLoading = () => {
     return <LoadingView message="Loading editor..." />
@@ -39,6 +40,15 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
         [],
     );
 
+
+    const themeClass = () => {
+        const { theme } = useTheme()
+        if (theme === "dark") {
+            return "dark"
+        }
+        return "light"
+    }
+
     return (
         <div className="size-full">
             <ReactFlow
@@ -50,6 +60,7 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
                 onInit={setEditor}
                 snapGrid={[10, 10]}
                 snapToGrid
+                colorMode={themeClass()}
                 fitView
                 // panOnScroll
                 // panOnDrag={false}
@@ -57,12 +68,11 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
                 nodeTypes={nodeComponents}
                 proOptions={{
                     hideAttribution: true,
-        
                 }}
             >
                 <Background />
                 <Controls />
-                <MiniMap />
+                <MiniMap className="border border-black/20" pannable zoomable />
                 <Panel position="top-right">
                     <AddNodeButton />
                 </Panel>

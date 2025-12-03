@@ -1,12 +1,13 @@
 "use client";
 
-import { CreditCardIcon, FolderOpenIcon, HistoryIcon, KeyIcon, LogOutIcon, StarIcon } from "lucide-react";
+import { CreditCardIcon, FolderOpenIcon, HistoryIcon, KeyIcon, LampDesk, LogOutIcon, Moon, StarIcon, Sun } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
 import { useHasActiveSubscription } from "@/features/subscriptions/hooks/use-subscription";
+import { ModeToggle } from "./theme-toggle";
 
 const menuItems = [
     {
@@ -89,6 +90,9 @@ export const AppSidebar = () => {
                             </SidebarMenuButton>
                         </SidebarMenuItem>
                     )}
+                    <SidebarMenuItem>
+                        <ModeToggle />
+                    </SidebarMenuItem>
                     <SidebarMenuItem>
                         <SidebarMenuButton
                             tooltip="Billing Portal"
