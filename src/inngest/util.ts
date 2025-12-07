@@ -33,12 +33,12 @@ export const topologicalsort = (
     try{
         sortedNodeIds = toposort(edges);
         sortedNodeIds = [...new Set(sortedNodeIds)];
-    }catch(e){
-        if(e instanceof Error && e.message.includes("cycle")){
+    }catch(error){
+        if(error instanceof Error && error.message.includes("Cyclic")){
+            toast.error("workflow contains a cyclic node allignment");
             throw new NonRetriableError("workflow contains a cyclic dependency");
-            toast.error("workflow contains a cyclic dependency");
         }
-        throw e;
+        throw error;
     }
 
     const nodeMap = new Map(nodes.map((n)=>[n.id, n]));

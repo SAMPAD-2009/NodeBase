@@ -1,22 +1,26 @@
 import type { NodeExecuter } from "@/features/executions/types";
 import { NonRetriableError } from "inngest";
-import ky, {type Options as kyOptions} from "ky";
+import ky, { type Options as kyOptions } from "ky";
 
 type HttpRequestData = {
+    variableName?: string;
     endpoint?: string;
     method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
     body?: string;
 };
 
-export const HttpRequestExecuter: NodeExecuter<HttpRequestData> = async({
+export const HttpRequestExecuter: NodeExecuter<HttpRequestData> = async ({
     data,
     nodeId,
     context,
     step,
 }) => {
 
-    if(!data.endpoint){
+    if (!data.endpoint) {
         throw new NonRetriableError("HTTP REQUEST:endpoint is required");
+    }
+    if (!data.variableName) {
+        throw new NonRetriableError("HTTP REQUEST:Variable name is required");
     }
 
     const result = await step.run("http-request", async () => {
@@ -25,8 +29,11 @@ export const HttpRequestExecuter: NodeExecuter<HttpRequestData> = async({
 
         const options: kyOptions = { method };
 
-        if (["POST", "PUT", "PATCH"].includes(method)){          
-                options.body = data.body;
+        if (["POST", "PUT", "PATCH"].includes(method)) {
+            options.body = data.body;
+            options.headers = {
+                "Content-Type": "application/json",
+            };
         }
 
         const response = await ky(endpoint, options);
@@ -34,15 +41,25 @@ export const HttpRequestExecuter: NodeExecuter<HttpRequestData> = async({
         const responseData = contentType?.includes("application/json")
             ? await response.json()
             : await response.text();
-        return {
-            ...context,
+
+        const responsePayload = {
             httpResponse: {
                 status: response.status,
                 statusText: response.statusText,
                 data: responseData,
-            },
+            }
+        }
+        if (data.variableName) {
+            return {
+                ...context,
+                [data.variableName]: responsePayload,
+            }
         }
 
+        return {
+            ...context,
+            ...responsePayload,
+        }
 
     });
 
