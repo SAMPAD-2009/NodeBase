@@ -25,39 +25,35 @@ interface Props {
     Open: boolean;
     onOpenChange: (open: boolean) => void;
     onSubmit: (values: z.infer<typeof formSchema>) => void;
-    defaultEndpoint?: string;
-    defaultMethod?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-    defaultBody?: string;
+    defaultValues?: Partial<HttpRequestFormValues>;
 };
 
-export type formType = z.infer<typeof formSchema>;
+export type HttpRequestFormValues = z.infer<typeof formSchema>;
 
 export const HTTPRequestDialog = ({
     Open,
     onOpenChange,
     onSubmit,
-    defaultEndpoint = "",
-    defaultMethod = "GET",
-    defaultBody = "",
+    defaultValues = {},
 }: Props) => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            endpoint: defaultEndpoint,
-            method: defaultMethod,
-            body: defaultBody,
+            endpoint: defaultValues.endpoint || "",
+            method: defaultValues.method || "GET",
+            body: defaultValues.body || "",
         },
     });
 
-    useEffect(()=>{
-        if(Open){
+    useEffect(() => {
+        if (Open) {
             form.reset({
-                endpoint: defaultEndpoint,
-                method: defaultMethod,
-                body: defaultBody,
+                endpoint: defaultValues.endpoint || "",
+                method: defaultValues.method || "GET",
+                body: defaultValues.body || "",
             })
         }
-    },[Open, defaultEndpoint, defaultMethod, defaultBody, form]);
+    }, [Open, defaultValues, form]);
 
     const watchmethod = form.watch("method");
     const showBodyField = ["POST", "PUT", "PATCH"].includes(watchmethod);
@@ -164,7 +160,7 @@ export const HTTPRequestDialog = ({
                         <DialogFooter className="mt-4">
                             <Button type="submit">Save</Button>
                         </DialogFooter>
-                    
+
                     </form>
                 </Form>
             </DialogContent>

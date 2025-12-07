@@ -2,4 +2,4 @@ procs:
   dev:
     shell: "npm run dev"
   inngest:
-    shell: "npx inngest-cli@latest dev"   
+    shell: "npm run inngest:dev"   

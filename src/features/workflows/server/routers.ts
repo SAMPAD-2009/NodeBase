@@ -6,11 +6,33 @@ import { createTRPCRouter, protectedProcedure, premiumProcedure } from "@/trpc/i
 import { TRPCError } from "@trpc/server";
 import { generateSlug } from "random-word-slugs";
 import z from "zod";
+import { inngest } from "@/inngest/client";
 
 
 
 
 export const workflowsRouter = createTRPCRouter({
+    execute: protectedProcedure
+        .input(z.object({ id: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            const workflow = await prisma.workflow.findUniqueOrThrow({
+                where: {
+                    userId: ctx.auth.user.id,
+                    id: input.id,
+                },
+            });
+
+            await inngest.send({
+                name: "workflows/execute.workflow",
+                data: {
+                    workflowId: input.id,
+                },
+            })
+
+            return workflow;
+
+        }),
+
     create: premiumProcedure.mutation(({ ctx }) => {
         return prisma.workflow.create({
             data: {
@@ -51,14 +73,14 @@ export const workflowsRouter = createTRPCRouter({
         }),
     update: protectedProcedure
         .input(
-            z.object({ 
-                id: z.string(), 
+            z.object({
+                id: z.string(),
                 nodes: z.array(
                     z.object({
                         id: z.string(),
                         type: z.string().nullish(),
                         position: z.object({ x: z.number(), y: z.number() }),
-                        data: z.record(z.string(),z.any()).optional(),
+                        data: z.record(z.string(), z.any()).optional(),
                     }),
                 ),
                 edges: z.array(
@@ -73,16 +95,16 @@ export const workflowsRouter = createTRPCRouter({
 
             })
         )
-        .mutation(async({ ctx, input }) => {
+        .mutation(async ({ ctx, input }) => {
             const { id, nodes, edges } = input;
 
             const workflow = await prisma.workflow.findUniqueOrThrow({
                 where: { id, userId: ctx.auth.user.id },
             });
 
-            return await prisma.$transaction(async (tx)=>{
+            return await prisma.$transaction(async (tx) => {
                 await tx.node.deleteMany({
-                    where: {  workflowId: id, }
+                    where: { workflowId: id, }
                 });
 
                 await tx.node.createMany({
@@ -112,7 +134,7 @@ export const workflowsRouter = createTRPCRouter({
                 });
 
                 return workflow;
-            } )
+            })
 
         }),
     getOne: protectedProcedure

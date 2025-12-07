@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
 import { useHasActiveSubscription } from "@/features/subscriptions/hooks/use-subscription";
-import { ModeToggle } from "./theme-toggle";
+import { ChangeColor, ModeToggle } from "./theme-toggle";
 
 const menuItems = [
     {
@@ -92,6 +92,9 @@ export const AppSidebar = () => {
                     )}
                     <SidebarMenuItem>
                         <ModeToggle />
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                        <ChangeColor />
                     </SidebarMenuItem>
                     <SidebarMenuItem>
                         <SidebarMenuButton
