@@ -93,9 +93,9 @@ export const AppSidebar = () => {
                     <SidebarMenuItem>
                         <ModeToggle />
                     </SidebarMenuItem>
-                    <SidebarMenuItem>
+                    {/* <SidebarMenuItem>
                         <ChangeColor />
-                    </SidebarMenuItem>
+                    </SidebarMenuItem> */}
                     <SidebarMenuItem>
                         <SidebarMenuButton
                             tooltip="Billing Portal"

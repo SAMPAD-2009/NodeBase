@@ -7,6 +7,7 @@ import { TRPCError } from "@trpc/server";
 import { generateSlug } from "random-word-slugs";
 import z from "zod";
 import { inngest } from "@/inngest/client";
+import { sendWorkflowExecution } from "@/inngest/util";
 
 
 
@@ -22,11 +23,8 @@ export const workflowsRouter = createTRPCRouter({
                 },
             });
 
-            await inngest.send({
-                name: "workflows/execute.workflow",
-                data: {
-                    workflowId: input.id,
-                },
+            await sendWorkflowExecution({
+                workflowId: input.id,
             })
 
             return workflow;

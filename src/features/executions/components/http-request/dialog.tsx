@@ -8,15 +8,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect} from "react";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const formSchema = z.object({
     variableName: z
         .string()
         .min(1, { message: "Variable name is required" })
         .regex(/^[a-zA-Z_$][a-zA-Z0-9_$]*$/, { message: "Variable name must start with a letter, underscore, or dollar sign, followed by any number of letters, numbers, underscores, or dollar signs" }),
-    endpoint: z.url({ message: "Please enter a valid URL" }),
+    endpoint: z.string().min(1, { message: "Please enter a valid URL" }),
     method: z.enum(["GET", "POST", "PUT", "DELETE", "PATCH"]),
     body: z
         .string()
@@ -79,63 +80,118 @@ export const HTTPRequestDialog = ({
                         Configure settings for HTTP request node.
                     </DialogDescription>
                 </DialogHeader>
-                <Form {...form}>
-                    <form
-                        onSubmit={form.handleSubmit(handleSubmit)}
-                        className={`space-y-8 mt-4 `}
-                    >
-                        <div className={`${showBodyField ? "grid grid-cols-2 gap-4" : ""}`}>
-                            <div className="space-y-8">
+
+                <ScrollArea className="max-h-[calc(100vh-220px)]">
+                    <Form {...form}>
+                        <form
+                            onSubmit={form.handleSubmit(handleSubmit)}
+                            className={`space-y-8 mt-4 `}
+                            id="http-request-dialog-form"
+                        >
+
+
+                            <FormField
+                                control={form.control}
+                                name="variableName"
+                                render={({ field }) => {
+                                    return (
+                                        <FormItem>
+                                            <FormLabel>Variable Name</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    className="w-full"
+                                                    placeholder="myAPI"
+                                                />
+                                            </FormControl>
+                                            <FormDescription>
+                                                Use this name to reference the variable in other nodes.{" "}
+                                                {`{{${watchVariableName}.httpResponse.data}}`}
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )
+                                }}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="method"
+                                render={({ field }) => {
+                                    return (
+                                        <FormItem>
+                                            <FormLabel>Method</FormLabel>
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder="Select a method" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="GET">GET</SelectItem>
+                                                    <SelectItem value="POST">POST</SelectItem>
+                                                    <SelectItem value="PUT">PUT</SelectItem>
+                                                    <SelectItem value="DELETE">DELETE</SelectItem>
+                                                    <SelectItem value="PATCH">PATCH</SelectItem>
+                                                </SelectContent>
+
+                                            </Select>
+                                            <FormDescription>
+                                                The HTTP method to use for the request.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )
+                                }}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="endpoint"
+                                render={({ field }) => {
+                                    return (
+                                        <FormItem>
+                                            <FormLabel>Endpoint URL</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    className="w-full"
+                                                    placeholder="https://example.com"
+                                                />
+                                            </FormControl>
+                                            <FormDescription>
+                                                Static URL or use {"{{variables}}"} for simple values or
+                                                {"{{json variables}}"} to stringify data.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )
+                                }}
+                            />
+
+
+
+
+                            {showBodyField && (
+
                                 <FormField
                                     control={form.control}
-                                    name="variableName"
+                                    name="body"
+                                    
                                     render={({ field }) => {
                                         return (
                                             <FormItem>
-                                                <FormLabel>Variable Name</FormLabel>
+                                                <FormLabel>Request Body</FormLabel>
                                                 <FormControl>
-                                                    <Input
+                                                    <Textarea
                                                         {...field}
-                                                        className="w-full"
-                                                        placeholder="myAPI"
+                                                        className="w-full min-h-[120px] font-mono text-sm"
+                                                        placeholder="JSON or plain text"
                                                     />
                                                 </FormControl>
                                                 <FormDescription>
-                                                    Use this name to reference the variable in other nodes.{" "}
-                                                    {`{{${watchVariableName}.httpResponse.data}}`}
-                                                </FormDescription>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )
-                                    }}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="method"
-                                    render={({ field }) => {
-                                        return (
-                                            <FormItem>
-                                                <FormLabel>Method</FormLabel>
-                                                <Select
-                                                    onValueChange={field.onChange}
-                                                    defaultValue={field.value}
-                                                >
-                                                    <FormControl>
-                                                        <SelectTrigger className="w-full">
-                                                            <SelectValue placeholder="Select a method" />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        <SelectItem value="GET">GET</SelectItem>
-                                                        <SelectItem value="POST">POST</SelectItem>
-                                                        <SelectItem value="PUT">PUT</SelectItem>
-                                                        <SelectItem value="DELETE">DELETE</SelectItem>
-                                                        <SelectItem value="PATCH">PATCH</SelectItem>
-                                                    </SelectContent>
-
-                                                </Select>
-                                                <FormDescription>
-                                                    The HTTP method to use for the request.
+                                                    JSON or plain text to send with the request.
                                                 </FormDescription>
                                                 <FormMessage />
                                             </FormItem>
@@ -143,67 +199,21 @@ export const HTTPRequestDialog = ({
                                     }}
                                 />
 
-
-                            </div>
-
-                            {showBodyField && (
-                                <div>
-                                    <FormField
-                                        control={form.control}
-                                        name="body"
-                                        render={({ field }) => {
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Request Body</FormLabel>
-                                                    <FormControl>
-                                                        <Textarea
-                                                            {...field}
-                                                            className="w-full min-h-[220px] font-mono text-sm"
-                                                            placeholder="JSON or plain text"
-                                                        />
-                                                    </FormControl>
-                                                    <FormDescription>
-                                                        JSON or plain text to send with the request.
-                                                    </FormDescription>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )
-                                        }}
-                                    />
-                                </div>
                             )}
-                        </div>
-                        <FormField
-                            control={form.control}
-                            name="endpoint"
-                            render={({ field }) => {
-                                return (
-                                    <FormItem>
-                                        <FormLabel>Endpoint URL</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                className="w-full"
-                                                placeholder="https://example.com"
-                                            />
-                                        </FormControl>
-                                        <FormDescription>
-                                            Static URL or use {"{{variables}}"} for simple values or
-                                            {"{{json variables}}"} to stringify data.
-                                        </FormDescription>
-                                        <FormMessage />
-                                    </FormItem>
-                                )
-                            }}
-                        />
-                        <DialogFooter className="mt-4">
-                            <Button type="submit">Save</Button>
-                        </DialogFooter>
 
 
-                    </form>
-                </Form>
+
+
+
+                        </form>
+                    </Form>
+                </ScrollArea>
+                <DialogFooter className="mt-4">
+                    <Button type="submit" form="http-request-dialog-form">Save</Button>
+                </DialogFooter>
+
             </DialogContent>
+
         </Dialog>
     )
 
