@@ -13,8 +13,8 @@ handlebars.registerHelper("json", (context) => {
 });
 
 type AnthropicData = {
-    credentialId: string;
     variableName?: string;
+    credentialId?: string;
     model?: string;
     systemPrompt?: string;
     userPrompt?: string;
@@ -23,6 +23,7 @@ type AnthropicData = {
 export const anthropicExecuter: NodeExecuter<AnthropicData> = async ({
     data,
     nodeId,
+    userId,
     context,
     step,
     publish,
@@ -58,11 +59,19 @@ export const anthropicExecuter: NodeExecuter<AnthropicData> = async ({
         return prisma.credentials.findUniqueOrThrow({
             where: {
                 id: data.credentialId,
+                userId,
             },
         })
     });
 
     if (!credentialValue) {
+        await publish(
+            anthropicChannel().status(
+                {
+                    nodeId,
+                    status: "error",
+                })
+        );
         throw new NonRetriableError("credential not found");
     }
 
