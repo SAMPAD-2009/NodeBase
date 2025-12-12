@@ -4,6 +4,7 @@ import { generateText } from "ai";
 import handlebars from "handlebars";
 import { createOpenAI } from "@ai-sdk/openai";
 import { openaiChannel } from "@/inngest/channels/openai";
+import prisma from "@/lib/db";
 
 handlebars.registerHelper("json", (context) => {
     const jsonString = JSON.stringify(context, null, 2);
@@ -12,6 +13,7 @@ handlebars.registerHelper("json", (context) => {
 });
 
 type OpenaiData = {
+    credentialId?: string;
     variableName?: string;
     model?: string;
     systemPrompt?: string;
@@ -34,7 +36,7 @@ export const openaiExecuter: NodeExecuter<OpenaiData> = async ({
             })
     );
 
-    if (!data.variableName || !data.userPrompt) {
+    if (!data.variableName || !data.userPrompt || !data.credentialId) {
         await publish(
             openaiChannel().status(
                 {
@@ -42,7 +44,7 @@ export const openaiExecuter: NodeExecuter<OpenaiData> = async ({
                     status: "error",
                 })
         );
-        throw new NonRetriableError("variableName and userPrompt are required");
+        throw new NonRetriableError("variableName, userPrompt and credentialId are required");
     }
 
     const systemPrompt = data.systemPrompt
@@ -54,10 +56,20 @@ export const openaiExecuter: NodeExecuter<OpenaiData> = async ({
 
 
     // todo
-    const credentialValue = process.env.OPENAI_API_KEY;
+    const credentialValue = await step.run("get-credential", ()=>{
+        return prisma.credentials.findUniqueOrThrow({
+            where: {
+                id: data.credentialId,
+            },
+        })
+    });
+
+    if (!credentialValue){
+        throw new NonRetriableError("credential not found");
+    }
 
     const openai = createOpenAI({
-        apiKey: credentialValue,
+        apiKey: credentialValue.value,
     });
 
     try {

@@ -11,6 +11,11 @@ import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Image from "next/image";
+import { CredentialType } from "@/generated/prisma/enums";
+import { useCredentislByType } from "@/features/credentals/hooks/use-credentials";
+
+
 
 // export const AVAILABLE_MODELS = [
 //     "gemini-2.5-flash",
@@ -25,6 +30,7 @@ const formSchema = z.object({
         .string()
         .min(1, { message: "Variable name is required" })
         .regex(/^[a-zA-Z_$][a-zA-Z0-9_$]*$/, { message: "Variable name must start with a letter, underscore, or dollar sign, followed by any number of letters, numbers, underscores, or dollar signs" }),
+    credentialId: z.string().min(1, { message: "Please select a credential" }),
     model: z.string().min(1, { message: "Please select a model" }),
     systemPrompt: z.string().optional(),
     userPrompt: z.string().min(1, { message: "User prompt is required" }),
@@ -46,6 +52,11 @@ export const AnthropicDialog = ({
     onSubmit,
     defaultValues = {},
 }: Props) => {
+    const {
+        data: credentials,
+        isLoading: isLoadingCredentials,
+    } = useCredentislByType(CredentialType.ANTHROPIC);
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -54,6 +65,7 @@ export const AnthropicDialog = ({
             model: defaultValues.model || "claude-3.5-sonnet",
             systemPrompt: defaultValues.systemPrompt || "",
             userPrompt: defaultValues.userPrompt || "",
+            credentialId: defaultValues.credentialId || "",
         },
     });
 
@@ -65,6 +77,7 @@ export const AnthropicDialog = ({
                 model: defaultValues.model || "claude-3.5-sonnet",
                 systemPrompt: defaultValues.systemPrompt || "",
                 userPrompt: defaultValues.userPrompt || "",
+                credentialId: defaultValues.credentialId || "",
             })
         }
     }, [Open, defaultValues, form]);
@@ -80,7 +93,7 @@ export const AnthropicDialog = ({
         <Dialog open={Open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Anthropic Node</DialogTitle>   
+                    <DialogTitle>Anthropic Node</DialogTitle>
                     <DialogDescription>
                         Configure the AI model and prompts for this node
                     </DialogDescription>
@@ -110,6 +123,50 @@ export const AnthropicDialog = ({
                                             <FormDescription>
                                                 Use this name to reference the variable in other nodes.{" "}
                                                 {`{{${watchVariableName}.aiResponse}}`}
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )
+                                }}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="credentialId"
+
+                                render={({ field }) => {
+                                    return (
+                                        <FormItem>
+                                            <FormLabel>Anthropic API</FormLabel>
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                                disabled={isLoadingCredentials || !credentials?.length}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder="Select a credential" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {credentials?.map((options) => (
+                                                        <SelectItem key={options.id} value={options.id}>
+                                                            <div className="flex items-center gap-2">
+                                                                <Image
+                                                                    src="/anthropic.svg"
+                                                                    alt="Anthropic"
+                                                                    width={16}
+                                                                    height={16}
+                                                                />
+                                                                {options.name}
+                                                            </div>
+                                                        </SelectItem>
+                                                    ))}
+
+                                                </SelectContent>
+
+                                            </Select>
+                                            <FormDescription className="text-red-500">
+                                                {!credentials?.length && "Please add a Anthropic credential"}
                                             </FormDescription>
                                             <FormMessage />
                                         </FormItem>
@@ -150,6 +207,7 @@ export const AnthropicDialog = ({
                                     )
                                 }}
                             /> */}
+
                             <FormField
                                 control={form.control}
                                 name="systemPrompt"
