@@ -17,6 +17,8 @@ interface BaseTriggerNodeProps extends NodeProps {
     status?: NodeStatus;
     onSettings?: () => void;
     onDoubleClick?: () => void;
+    /** Optional function to run before deletion. If provided it will be awaited; the internal delete will always run afterward. */
+    onBeforeDelete?: () => void | Promise<void>;
 }
 
 export const BaseTriggerNode = memo(
@@ -29,11 +31,12 @@ export const BaseTriggerNode = memo(
         onSettings,
         onDoubleClick,
         status = "initial",
+        onBeforeDelete,
     }: BaseTriggerNodeProps) => {
 
         const { setNodes, setEdges } = useReactFlow();
 
-        const handleDelete = () => {
+        const handleDelete = useCallback(() => {
             setNodes((currentNodes) => {
                 const updateNodes = currentNodes.filter((node) => node.id !== id);
                 return updateNodes;
@@ -45,13 +48,29 @@ export const BaseTriggerNode = memo(
                 );
                 return updateEdges;
             });
-        }
+        }, [id, setNodes, setEdges]);
+
+        // Run optional `onBeforeDelete` (awaiting if it returns a promise), but
+        // always perform the internal delete afterwards. Keep this stable with `useCallback`.
+        const resolvedOnDelete = useCallback(() => {
+            (async () => {
+                try {
+                    if (onBeforeDelete) await onBeforeDelete();
+                } catch (err) {
+                    // Don't prevent deletion if the pre-delete hook fails
+                    // eslint-disable-next-line no-console
+                    console.error("onBeforeDelete failed:", err);
+                } finally {
+                    handleDelete();
+                }
+            })();
+        }, [handleDelete, onBeforeDelete]);
 
         return (
             <WorkflowNode
                 name={name}
                 description={description}
-                onDelete={handleDelete}
+                onDelete={resolvedOnDelete}
                 onSettings={onSettings}
             >
                 <NodeStatusIndicator

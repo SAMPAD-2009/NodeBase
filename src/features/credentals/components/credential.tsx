@@ -40,11 +40,17 @@ const credentialTypeoptions = [
         label: "Gemini",
         logo: "/gemini.svg",
     },
+    {
+        value: CredentialType.CRON,
+        label: "Cron",
+        logo: "/cron.svg",
+    }
 ];
 export const credentialLogos: Record<CredentialType , string> = {
     [CredentialType.GEMINI]: "/gemini.svg",
     [CredentialType.ANTHROPIC]: "/anthropic.svg",
     [CredentialType.OPENAI]: "/openai.svg",
+    [CredentialType.CRON]:"/cron.svg"
 }
 
 interface credentialFormProps {

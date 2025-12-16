@@ -34,6 +34,12 @@ const triggerNodes: NodeTypeOption[] = [
         label: "Stripe Trigger",
         description: "Trigger the workflow when a Stripe event is received",
         icon: "/stripe.svg",
+    },
+    {
+        type: NodeType.CRON,
+        label: "Cron Trigger",
+        description: "Trigger the workflow on a schedule",
+        icon: "/cron.svg",
     }
 ];
 

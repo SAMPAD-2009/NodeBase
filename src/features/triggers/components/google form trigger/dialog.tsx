@@ -42,7 +42,7 @@ export const GoogleFormTriggerDialog = ({ Open, onOpenChange }: Props) => {
                 </DialogHeader>
                 <ScrollArea className="max-h-[calc(100vh-220px)]">
                     <div className="space-y-4">
-                        <div className="sapace-y-2">
+                        <div className="space-y-2">
                             <Label htmlFor="webhook-url" className="pb-2">Webhook URL</Label>
                             <div className="flex gap-4">
                                 <Input id="webhook-url" value={webhookUrl} readOnly className="font-mono text-sm" />

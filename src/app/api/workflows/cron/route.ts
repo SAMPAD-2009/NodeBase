@@ -1,7 +1,7 @@
 import { sendWorkflowExecution } from "@/inngest/util";
 import { type NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
     try {
         const url = new URL(request.url);
         const workflowId = url.searchParams.get("workflowId");
@@ -10,28 +10,13 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ success: false, error: "Missing workflowId" }, { status: 400 });
         }
 
-        const body = await request.json();
-
-        const formData = {
-            formId: body.formId,
-            formTitle: body.formTitle,
-            responseId: body.responseId,
-            timestamp: body.timestamp,
-            respondentEmail: body.respondentEmail,
-            responses: body.responses,
-            raw: body,
-        }
-
        await sendWorkflowExecution({
-            workflowId,
-            initialData:{
-                googleForm: formData,
-            }
+            workflowId
        })
        return NextResponse.json({ success: true }, { status: 200 });
 
     } catch (error) {
-        console.error("Error processing Google Form trigger:", error);
+        console.error("Error processing cron trigger:", error);
         return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
     }
 }

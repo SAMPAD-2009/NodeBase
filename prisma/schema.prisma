@@ -96,6 +96,7 @@ enum CredentialType {
   GEMINI
   ANTHROPIC
   OPENAI
+  CRON
 }
 
 model Workflow {
@@ -120,6 +121,7 @@ enum NodeType {
   ANTHROPIC
   OPENAI
   GEMINI
+  CRON
 }
 
 model Node {
