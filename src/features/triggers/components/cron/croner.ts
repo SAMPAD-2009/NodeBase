@@ -46,7 +46,7 @@ export async function createorupdatecron(data: { cronExpression: string; credent
         }
     } else {
         // Create new cron job (include timezone if provided)
-        const createUrl = `https://app.fastcron.com/api/v1/cron_add?token=${credentialValue.value}&timezone=${data.timezone || "UTC"}&name=${data.workflowId}&expression='${data.cronExpression}'&url=${webhookUrl}`;
+        const createUrl = `https://app.fastcron.com/api/v1/cron_add?token=${credentialValue.value}&timezone=${data.timezone || "UTC"}&name=${data.workflowId}&expression=${data.cronExpression}&url=${webhookUrl}`;
         const createResponse = await fetch(createUrl, { method: "POST" });
         console.log(createUrl);
 

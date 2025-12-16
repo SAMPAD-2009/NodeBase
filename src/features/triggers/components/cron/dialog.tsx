@@ -193,14 +193,7 @@ export const CronTriggerDialog = ({
                         </form>
                     </Form>
                     <div className="rounded-lg bg-muted p-4 ">
-                        <h4 className="font-medium text-sm">Cron Syntax</h4>
-                        <ol className="text-sm text-muted-foreground space -y-1 list-decimal list-inside">
-                            <li>* - minutes past the hour (0-59)</li>
-                            <li>* - hours of the day (0-23)</li>
-                            <li>* - days of the month (1-31)</li>
-                            <li>* - months of the year (1-12)</li>
-                            <li>* - days of the week (0-6, where 0 is Sunday)</li>
-                        </ol>
+                        <Image src="/cron.png" alt="Cron Syntax" width={200} height={100} />
                     </div>
 
                     <div className="space-y-2 p-2">
