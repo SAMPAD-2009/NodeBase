@@ -193,7 +193,14 @@ export const CronTriggerDialog = ({
                         </form>
                     </Form>
                     <div className="rounded-lg bg-muted p-4 ">
-                        <Image src="/cron.png" alt="Cron Syntax" width={200} height={100} />
+                        <h4 className="font-medium text-sm">Supported Cron</h4>
+                        <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
+                            <li>*/30 * * * *  Every 30 minutes</li>
+                            <li>5 * * * *  Every hour</li>
+                            <li>5 */2 * * *  Every 2 hours</li>
+                            <li>5 0,12 * * *  Twice a day</li>
+                            <li>5 7 * * *  Daily at 7 AM</li>
+                        </ol>
                     </div>
 
                     <div className="space-y-2 p-2">

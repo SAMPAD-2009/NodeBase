@@ -122,6 +122,8 @@ enum NodeType {
   OPENAI
   GEMINI
   CRON
+  DISCORD
+  SLACK
 }
 
 model Node {
