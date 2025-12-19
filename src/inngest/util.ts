@@ -3,6 +3,7 @@ import { Node, Connection } from "@/generated/prisma/client";
 import { NonRetriableError } from "inngest";
 import { toast } from "sonner";
 import { inngest } from "./client";
+import { createId } from "@paralleldrive/cuid2";
 
 export const topologicalsort = (
     nodes : Node[],
@@ -53,5 +54,6 @@ export const sendWorkflowExecution = async (data: {
     return inngest.send({
         name : "workflows/execute.workflow",
         data,
+        id: createId(),
     })
 }
