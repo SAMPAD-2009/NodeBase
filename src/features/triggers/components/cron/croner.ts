@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/db";
+import { decrypt } from "@/lib/encryption";
 
 
 
@@ -38,7 +39,7 @@ export async function createorupdatecron(data: { cronExpression: string; credent
 
     if (matching) {
         // Update existing cron job (include timezone if provided)
-        const updateUrl = `https://app.fastcron.com/api/v1/cron_edit?token=${credentialValue.value}&id=${matching.id}&expression=${data.cronExpression}${data.timezone ? `&timezone=${data.timezone}` : ""}`;
+        const updateUrl = `https://app.fastcron.com/api/v1/cron_edit?token=${decrypt(credentialValue.value)}&id=${matching.id}&expression=${data.cronExpression}${data.timezone ? `&timezone=${data.timezone}` : ""}`;
         const updateResponse = await fetch(updateUrl, { method: "POST" });
 
         if (!updateResponse.ok) {
@@ -46,7 +47,7 @@ export async function createorupdatecron(data: { cronExpression: string; credent
         }
     } else {
         // Create new cron job (include timezone if provided)
-        const createUrl = `https://app.fastcron.com/api/v1/cron_add?token=${credentialValue.value}&timezone=${data.timezone || "UTC"}&name=${data.workflowId}&expression=${data.cronExpression}&url=${webhookUrl}`;
+        const createUrl = `https://app.fastcron.com/api/v1/cron_add?token=${decrypt(credentialValue.value)}&timezone=${data.timezone || "UTC"}&name=${data.workflowId}&expression=${data.cronExpression}&url=${webhookUrl}`;
         const createResponse = await fetch(createUrl, { method: "POST" });
         console.log(createUrl);
 
@@ -87,7 +88,7 @@ export async function removeCron(data: { credentialId: string; workflowId: strin
 
         // Try known delete endpoints; be tolerant to different API names
 
-        const delURL = `https://app.fastcron.com/api/v1/cron_delete?token=${credentialValue.value}&id=${matching.id}`;
+        const delURL = `https://app.fastcron.com/api/v1/cron_delete?token=${decrypt(credentialValue.value)}&id=${matching.id}`;
 
 
         let deleted = false;
