@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "build": "next build --turbopack && prisma generate",
     "start": "next start",
     "lint": "biome check",
+    "postinstall": "prisma generate",
     "format": "biome format --write",
     "inngest:dev": "inngest-cli dev",
     "dev:all": "mprocs"
