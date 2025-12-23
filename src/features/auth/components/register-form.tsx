@@ -18,10 +18,10 @@ const registerSchema = z.object({
     password: z.string().min(8, { message: "Password must be at least 8 characters long" }),
     confirmPassword: z.string(),
 })
-.refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-});
+    .refine((data) => data.password === data.confirmPassword, {
+        message: "Passwords don't match",
+        path: ["confirmPassword"],
+    });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
@@ -36,25 +36,61 @@ export function RegisterForm() {
         },
     });
 
+    const signInGithub = async () => {
+        await authClient.signIn.social({
+            provider: "github",
+            callbackURL: "/",
+        }
+            , {
+                onSuccess: () => {
+                    toast.success("Logged in successfully");
+                    router.push("/");
+                },
+                onError: (ctx) => {
+                    toast.error(ctx.error.message);
+                },
+            }
+        );
+    }
+
+    const signInGoogle = async () => {
+        await authClient.signIn.social({
+            provider: "google",
+            callbackURL: "/",
+        }
+            , {
+                onSuccess: () => {
+                    toast.success("Logged in successfully");
+                    router.push("/");
+                },
+                onError: (ctx) => {
+                    toast.error(ctx.error.message);
+                },
+            }
+        );
+    }
+
+
     const onSubmit = async (values: RegisterFormValues) => {
         await authClient.signUp.email(
-        {
-            name:values.email,
-            email:values.email,
-            password:values.password,
-            callbackURL:"/"
+            {
+                name: values.email,
+                email: values.email,
+                password: values.password,
+                callbackURL: "/"
 
-         },
-         {
-            onSuccess:()=>{
-                toast.success("Account created successfully");
-                router.push("/");
             },
-            onError:(ctx)=>{
-                toast.error(ctx.error.message);
+            {
+                onSuccess: () => {
+                    toast.success("Account created successfully");
+                    router.push("/");
+                },
+                onError: (ctx) => {
+                    toast.error(ctx.error.message);
+                }
             }
-         }
-    )};
+        )
+    };
     const isPending = form.formState.isSubmitting;
 
     return (
@@ -69,11 +105,11 @@ export function RegisterForm() {
                         <form onSubmit={form.handleSubmit(onSubmit)}>
                             <div className="grid gap-6">
                                 <div className="flex flex-col gap-4">
-                                    <Button variant="outline" className="w-full" type="button" disabled={isPending}>
+                                    <Button variant="outline" className="w-full" type="button" disabled={isPending} onClick={signInGithub}>
                                         <Image src="/github.svg" alt="Github" width={20} height={20} />
                                         Continue with Github
                                     </Button>
-                                    <Button variant="outline" className="w-full" type="button" disabled={isPending}>
+                                    <Button variant="outline" className="w-full" type="button" disabled={isPending} onClick={signInGoogle}>
                                         <Image src="/google.svg" alt="Google" width={20} height={20} />
                                         Continue with Google
                                     </Button>
@@ -131,11 +167,11 @@ export function RegisterForm() {
 
                             </div>
 
-                           </form>
-                        </Form>
-                    </CardContent>
-                </Card>
-            </div>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
+        </div>
 
 
 
