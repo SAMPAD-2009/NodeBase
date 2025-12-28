@@ -57,6 +57,7 @@ export const openaiExecuter: NodeExecuter<OpenaiData> = async ({
     const userPrompt = handlebars.compile(data.userPrompt || "")(context);
 
 
+    // todo
     const credentialValue = await step.run("get-credential", ()=>{
         return prisma.credentials.findUniqueOrThrow({
             where: {
