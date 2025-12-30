@@ -1,4 +1,4 @@
-import { NodeType } from "@/generated/prisma/enums";
+import { NodeType } from "@/generated/prisma/client";
 import { NodeExecuter } from "../types";
 import { manualTriggerExecuter } from "@/features/triggers/components/manual-trigger/executer";
 import { HttpRequestExecuter } from "../components/http-request/executer";

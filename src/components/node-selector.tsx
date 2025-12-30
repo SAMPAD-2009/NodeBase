@@ -6,7 +6,7 @@ import { GlobeIcon, MousePointerIcon } from "lucide-react";
 import React, { useCallback } from "react";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "./ui/sheet";
-import { NodeType } from "@/generated/prisma/enums";
+import { NodeType } from "@/generated/prisma/client";
 import { Separator } from "./ui/separator";
 
 export type NodeTypeOption = {

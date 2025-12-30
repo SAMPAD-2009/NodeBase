@@ -12,7 +12,7 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCredentislByType } from "@/features/credentals/hooks/use-credentials";
-import { CredentialType } from "@/generated/prisma/enums";
+import { CredentialType } from "@/generated/prisma/client";
 import Image from "next/image";
 
 // export const AVAILABLE_MODELS = [

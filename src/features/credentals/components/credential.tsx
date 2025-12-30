@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { CredentialType } from "@/generated/prisma/enums";
+import { CredentialType } from "@/generated/prisma/client";
 import { useRouter } from "next/navigation";
 import { useCreateCredential, useUpdateCredential, useSuspenseCredential } from "../hooks/use-credentials";
 import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
