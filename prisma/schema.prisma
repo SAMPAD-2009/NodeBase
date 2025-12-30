@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
   // remove `output` to let Prisma put client into node_modules/@prisma/client
   // Include the Linux query engine so deployments (e.g., Vercel) have the correct runtime engine.
   binaryTargets = ["native", "rhel-openssl-3.0.x", "debian-openssl-3.0.x"]
