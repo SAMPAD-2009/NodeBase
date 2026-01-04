@@ -48,8 +48,8 @@ export const premiumProcedure = protectedProcedure.use(
         });
 
         if(
-            !customer.activeSubscriptions ||
-            customer.activeSubscriptions.length === 0
+            (!customer.activeSubscriptions ||
+            customer.activeSubscriptions.length === 0) || customer.metadata.is_premium !== 'true'
         ){
             throw new TRPCError({
                 code: 'FORBIDDEN',
