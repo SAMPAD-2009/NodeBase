@@ -17,12 +17,12 @@ export const useHasActiveSubscription = () => {
     const {data: customerState, isLoading, ...rest} = useSubscription();
     
     const hasActiveSubscription =
-        customerState?.activeSubscriptions &&
-        customerState.activeSubscriptions.length > 0;
+        (customerState?.activeSubscriptions &&
+        customerState.activeSubscriptions.length > 0) || customerState?.metadata?.is_premium === "true";
 
      return {
         hasActiveSubscription,
-        subscription: customerState?.activeSubscriptions?.[0],
+        subscription: customerState?.activeSubscriptions?.[0] || customerState?.metadata?.is_premium === "true" ? {type: "premium"} : null,
         isLoading,
         ...rest 
      }
