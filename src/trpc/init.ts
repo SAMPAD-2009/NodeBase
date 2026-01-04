@@ -51,6 +51,16 @@ export const premiumProcedure = protectedProcedure.use(
             !customer.activeSubscriptions ||
             customer.activeSubscriptions.length === 0
         ){
+            // Log the returned customer state so we can debug cases where a 100% discount
+            // results in the customer not having an active subscription recorded by Polar.
+            // This will help determine whether the checkout created an invoice rather than
+            // a subscription, or if Polar is returning a different field we should check.
+            try {
+                console.debug("Polar customer state for premium check:", JSON.stringify(customer));
+            } catch (e) {
+                console.debug("Polar customer state: (non-serializable)", customer);
+            }
+
             throw new TRPCError({
                 code: 'FORBIDDEN',
                 message: 'You must be a premium user to access this resource',
