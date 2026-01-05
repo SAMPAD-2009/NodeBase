@@ -13,7 +13,7 @@ import { sendWorkflowExecution } from "@/inngest/util";
 
 
 export const workflowsRouter = createTRPCRouter({
-    execute: protectedProcedure
+    execute: protectedProcedure //TODO
         .input(z.object({ id: z.string() }))
         .mutation(async ({ ctx, input }) => {
             const workflow = await prisma.workflow.findUniqueOrThrow({
@@ -31,7 +31,7 @@ export const workflowsRouter = createTRPCRouter({
 
         }),
 
-    create: premiumProcedure.mutation(({ ctx }) => {
+    create: protectedProcedure.mutation(({ ctx }) => { // TODO
         return prisma.workflow.create({
             data: {
                 name: generateSlug(3),

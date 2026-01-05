@@ -9,7 +9,7 @@ import z from "zod";
 
 
 export const credentialsRouter = createTRPCRouter({
-    create: premiumProcedure
+    create: protectedProcedure // TODO
     .input(
         z.object({
             name: z.string().min(1, "Name is required"),
