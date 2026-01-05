@@ -16,7 +16,7 @@ interface PageProps {
 
 const page = async ({ params }: PageProps) => {
     await requireAuth();
-    const { executionId } = params;
+    const { executionId } = await params;
     await prefetchExecution(executionId);
     return (
         <div className="p-4 md:px-10 md:py-6 h-full">
