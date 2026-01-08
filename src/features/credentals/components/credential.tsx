@@ -14,6 +14,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useState } from "react";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 // import { ErrorView, LoadingView } from "@/components/entity-components";
 
 const formSchema = z.object({
@@ -44,13 +46,19 @@ const credentialTypeoptions = [
         value: CredentialType.CRON,
         label: "Cron",
         logo: "/cron.svg",
+    },
+    {
+        value: CredentialType.SUPABASE,
+        label: "Supabase",
+        logo: "/supabase.svg",
     }
 ];
-export const credentialLogos: Record<CredentialType , string> = {
+export const credentialLogos: Record<CredentialType, string> = {
     [CredentialType.GEMINI]: "/gemini.svg",
     [CredentialType.ANTHROPIC]: "/anthropic.svg",
     [CredentialType.OPENAI]: "/openai.svg",
-    [CredentialType.CRON]:"/cron.svg"
+    [CredentialType.CRON]: "/cron.svg",
+    [CredentialType.SUPABASE]: "/supabase.svg"
 }
 
 interface credentialFormProps {
@@ -97,6 +105,8 @@ export const CredentialForm = ({ initialData }: credentialFormProps) => {
             });
         }
     };
+
+    const [isView, setIsView] = useState(false);
 
     return (
         <>
@@ -163,7 +173,18 @@ export const CredentialForm = ({ initialData }: credentialFormProps) => {
                                     <FormItem>
                                         <FormLabel>API Key</FormLabel>
                                         <FormControl>
-                                            <Input {...field} type="password" placeholder="****..." />
+                                            <div className="flex items-center gap-2">
+                                                <Input {...field} type={isView ? "text" : "password"} placeholder="****..." />
+                                                <Button type="button" variant="outline" onClick={() => setIsView(!isView)}>
+                                                    {isView ? (
+
+                                                        <EyeIcon size="4" />
+
+                                                    ) : (
+                                                        <EyeOffIcon size="4" />
+                                                    )}
+                                                </Button>
+                                            </div>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -171,7 +192,7 @@ export const CredentialForm = ({ initialData }: credentialFormProps) => {
                             />
 
                             <div className="flex gap-4">
-                                <Button type="submit" disabled={createCredential.isPending || updateCredential.isPending}>
+                                <Button type="submit" disabled={createCredential.isPending || updateCredential.isPending} onClick={() =>setIsView(!isView)}>
                                     {isEdit ? "Update" : "Create"}
                                 </Button>
                                 <Button type="button" variant="outline" asChild>
@@ -179,6 +200,7 @@ export const CredentialForm = ({ initialData }: credentialFormProps) => {
                                         Cancel
                                     </Link>
                                 </Button>
+
                             </div>
                         </form>
                     </Form>
@@ -188,9 +210,9 @@ export const CredentialForm = ({ initialData }: credentialFormProps) => {
     )
 };
 
-export const CredentialView = ( {credentialId}:{credentialId:string}) =>{
+export const CredentialView = ({ credentialId }: { credentialId: string }) => {
 
     const { data: credential } = useSuspenseCredential(credentialId);
 
-    return <CredentialForm initialData={credential}/>
+    return <CredentialForm initialData={credential} />
 };

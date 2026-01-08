@@ -5,6 +5,7 @@ import { GeminiNode } from "@/features/executions/components/gemini/node";
 import { HttpRequestNode } from "@/features/executions/components/http-request/node";
 import { OpenaiNode } from "@/features/executions/components/Open-ai/node";
 import { SlackNode } from "@/features/executions/components/slack/node";
+import { SupabaseNode } from "@/features/executions/components/supabase-node/node";
 import { CronTriggerNode } from "@/features/triggers/components/cron/node";
 import { GoogleFormTrigger } from "@/features/triggers/components/google form trigger/node";
 import { ManualTriggerNode } from "@/features/triggers/components/manual-trigger/node";
@@ -26,6 +27,7 @@ export const nodeComponents = {
     [NodeType.CRON]: CronTriggerNode,
     [NodeType.DISCORD]: DiscordNode,
     [NodeType.SLACK]: SlackNode,
+    [NodeType.SUPABASE]: SupabaseNode,
 } as const satisfies NodeTypes;
 
 export type RegisteredNodeType = keyof typeof nodeComponents;

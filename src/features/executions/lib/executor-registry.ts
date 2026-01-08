@@ -9,6 +9,7 @@ import { openaiExecuter } from "../components/Open-ai/executer";
 import { anthropicExecuter } from "../components/Anthropic/executer";
 import { discordExecuter } from "../components/discord/executer";
 import { slackExecuter } from "../components/slack/executer";
+import { supabaseExecuter } from "../components/supabase-node/executer";
 
 export const executorRegistry: Record<NodeType, NodeExecuter> = {
   [NodeType.MANUAL_TRIGGER] : manualTriggerExecuter,
@@ -21,7 +22,8 @@ export const executorRegistry: Record<NodeType, NodeExecuter> = {
   [NodeType.OPENAI]:openaiExecuter,
   [NodeType.CRON]:manualTriggerExecuter,
   [NodeType.DISCORD]:discordExecuter,
-  [NodeType.SLACK]:slackExecuter, // Placeholder until Slack executer is implemented
+  [NodeType.SLACK]:slackExecuter,
+  [NodeType.SUPABASE]:supabaseExecuter,
 };
 
 export const getExecutor = (type:NodeType):NodeExecuter => {

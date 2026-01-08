@@ -100,6 +100,7 @@ enum CredentialType {
   ANTHROPIC
   OPENAI
   CRON
+  SUPABASE
 }
 
 model Workflow {
@@ -128,6 +129,7 @@ enum NodeType {
   CRON
   DISCORD
   SLACK
+  SUPABASE
 }
 
 model Node {

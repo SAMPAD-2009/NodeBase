@@ -15,7 +15,7 @@ import { ErrorBoundary } from "react-error-boundary";
 const page = async ({ params }: PageProps) => {
     await requireAuth();
     const { workflowId } = await params;
-    prefetchWorkflow(workflowId);
+    await prefetchWorkflow(workflowId);
 
 
     return (

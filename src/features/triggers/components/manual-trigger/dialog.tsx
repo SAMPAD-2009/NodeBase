@@ -14,7 +14,7 @@ export const ManualTriggerDialog = ({Open,onOpenChange}:Props) =>{
                 <DialogHeader>
                     <DialogTitle>Manual Trigger</DialogTitle>
                     <DialogDescription>
-                        Configure settings for manual trigger node.
+                        No config available for manual node.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="py-4">

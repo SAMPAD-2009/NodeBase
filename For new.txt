@@ -1,0 +1,18 @@
+NodeType Enum in prisma
+cred type Enum 
+
+node-components
+node selector
+
+executer-registry
+channel in inngest
+functions in inngest
+credential.ts
+
+
+
+stripe listen --forward-to localhost:4242/webhook
+stripe trigger payment_intent.succeeded
+stripe login
+
+

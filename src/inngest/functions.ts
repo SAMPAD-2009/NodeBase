@@ -14,13 +14,14 @@ import { openaiChannel } from "./channels/openai";
 import { anthropicChannel } from "./channels/anthropic";
 import { cronTriggerChannel } from "./channels/cron";
 import { DiscordChannel } from "./channels/discord";
+import { supabaseChannel } from "./channels/supabase";
 
 
 
 export const executeWorkflow = inngest.createFunction(
   {
     id: "execute-workflow",
-    retries: 1,
+    retries: 0,
     onFailure: async ({ event, step }) => {
       return prisma.execution.update({
         where: { inngestEventId: event.data.event.id },
@@ -44,6 +45,7 @@ export const executeWorkflow = inngest.createFunction(
     anthropicChannel(),
     cronTriggerChannel(),
     DiscordChannel(),
+    supabaseChannel(),
   ],
 },
   async ({ event, step, publish }) => {
@@ -54,14 +56,20 @@ export const executeWorkflow = inngest.createFunction(
       throw new NonRetriableError("workflowId is required");
     }
 
-    await step.run("create-execution", async()=>{
-      await prisma.execution.create({
+    const createdExecution = await step.run("create-execution", async()=>{
+      const r = await prisma.execution.create({
         data: {
           workflowId,
           inngestEventId,
         },
       });
+      return r;
     });
+
+    // make the execution id available to node executors via context
+    const executionId = createdExecution?.id;
+    let context = event.data.initialData || {};
+    if (executionId) context = { ...(context || {}), _executionId: executionId };
 
     const sortedNodes = await step.run("prepare-workflow", async () => {
       const workflow = await prisma.workflow.findUniqueOrThrow({
@@ -88,8 +96,6 @@ export const executeWorkflow = inngest.createFunction(
       });
       return workflow.userId;
     })
-
-    let context = event.data.initialData || {};
 
     for (const node of sortedNodes) {
       const executor = getExecutor(node.type as NodeType);

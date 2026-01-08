@@ -79,6 +79,12 @@ const executionNodes: NodeTypeOption[] = [
         label: "Slack",
         description: "Use the Slack AI",
         icon: "/slack.svg",
+    },
+    {
+        type: NodeType.SUPABASE,
+        label: "Supabase",
+        description: "Use the Supabase DB",
+        icon: "/supabase.svg",
     }
 ];
 
