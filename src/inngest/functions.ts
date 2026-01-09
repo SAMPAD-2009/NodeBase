@@ -25,7 +25,7 @@ export const executeWorkflow = inngest.createFunction(
     onFailure: async ({ event, step }) => {
       // Find execution by inngest event ID
       const execution = await prisma.execution.findUnique({
-        where: { inngestEventId: event.id },
+        where: { inngestEventId: event.data.event.id },
       });
 
       if (execution) {
