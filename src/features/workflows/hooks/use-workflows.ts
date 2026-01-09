@@ -2,6 +2,7 @@ import { useTRPC } from "@/trpc/client";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useWorkflowsParams } from "./use-workfows-params";
+import { useRouter } from "next/navigation";
 
 
 export const useSuspenseWorkflows = () => {
@@ -93,11 +94,22 @@ export const useUpdateWorkflow = () => {
 
 export const useExecuteWorkflow = () => {
     const trpc = useTRPC();
+    const router = useRouter();
 
     return useMutation(trpc.workflows.execute.mutationOptions({
         onSuccess: (data) => {
-            toast.success(`Workflow ${data.name} executed successfully`);
-            },
+            // Show toast with link to execution details
+            toast.success("Workflow execution started", {
+                description: "Your workflow is running...",
+                action: {
+                    label: "Take me there",
+                    onClick: () => {
+                        router.push(`/executions/${data.executionId}`);
+                    },
+                },
+                duration: Infinity, // Keep toast open until user clicks or closes
+            });
+        },
         onError: (error) => {
             toast.error(`failed to execute workflow, ${error.message}`);
         }

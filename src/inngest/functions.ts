@@ -23,15 +23,22 @@ export const executeWorkflow = inngest.createFunction(
     id: "execute-workflow",
     retries: 0,
     onFailure: async ({ event, step }) => {
-      return prisma.execution.update({
-        where: { inngestEventId: event.data.event.id },
-        data: {
-          status: ExecutionStatus.FAILED,
-          completedAt: new Date(),
-          error: event.data.error.message || "Unknown error",
-          errorStack: event.data.error.stack || "",
-        },
-      })
+      // Find execution by inngest event ID
+      const execution = await prisma.execution.findUnique({
+        where: { inngestEventId: event.id },
+      });
+
+      if (execution) {
+        return prisma.execution.update({
+          where: { id: execution.id },
+          data: {
+            status: ExecutionStatus.FAILED,
+            completedAt: new Date(),
+            error: event.data.error.message || "Unknown error",
+            errorStack: event.data.error.stack || "",
+          },
+        });
+      }
     }
   }, {
   event: "workflows/execute.workflow",
@@ -56,18 +63,39 @@ export const executeWorkflow = inngest.createFunction(
       throw new NonRetriableError("workflowId is required");
     }
 
-    const createdExecution = await step.run("create-execution", async()=>{
-      const r = await prisma.execution.create({
-        data: {
+    // Find the execution that was created in the router
+    let execution = await step.run("find-execution", async () => {
+      return prisma.execution.findFirst({
+        where: {
           workflowId,
-          inngestEventId,
+          status: ExecutionStatus.RUNNING,
         },
+        orderBy: { startedAt: "desc" },
       });
-      return r;
     });
 
-    // make the execution id available to node executors via context
-    const executionId = createdExecution?.id;
+    // If not found, create it (fallback)
+    if (!execution) {
+      execution = await step.run("create-execution", async () => {
+        const r = await prisma.execution.create({
+          data: {
+            workflowId,
+            inngestEventId,
+          },
+        });
+        return r;
+      });
+    } else {
+      // Update with inngest event ID
+      await step.run("update-execution-event-id", async () => {
+        return prisma.execution.update({
+          where: { id: execution!.id },
+          data: { inngestEventId },
+        });
+      });
+    }
+
+    const executionId = execution.id;
     let context = event.data.initialData || {};
     if (executionId) context = { ...(context || {}), _executionId: executionId };
 
@@ -85,7 +113,7 @@ export const executeWorkflow = inngest.createFunction(
       return topologicalsort(workflow.nodes, workflow.connections);
     });
 
-    const userId= await step.run("find-user-id",async ()=>{
+    const userId = await step.run("find-user-id", async () => {
       const workflow = await prisma.workflow.findUniqueOrThrow({
         where: {
           id: workflowId,
@@ -95,7 +123,7 @@ export const executeWorkflow = inngest.createFunction(
         }
       });
       return workflow.userId;
-    })
+    });
 
     for (const node of sortedNodes) {
       const executor = getExecutor(node.type as NodeType);
@@ -109,9 +137,9 @@ export const executeWorkflow = inngest.createFunction(
       });
     }
 
-    await step.run("finalize-execution", async()=>{
+    await step.run("finalize-execution", async () => {
       await prisma.execution.update({
-        where: {inngestEventId},
+        where: { id: executionId },
         data: {
           status: ExecutionStatus.SUCCESS,
           completedAt: new Date(),
@@ -122,6 +150,7 @@ export const executeWorkflow = inngest.createFunction(
 
     return {
       workflowId,
+      executionId,
       context,
     };
   },

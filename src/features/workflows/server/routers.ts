@@ -23,11 +23,36 @@ export const workflowsRouter = createTRPCRouter({
                 },
             });
 
-            await sendWorkflowExecution({
-                workflowId: input.id,
-            })
+            // Create execution record first to get the ID
+            const execution = await prisma.execution.create({
+                data: {
+                    workflowId: input.id,
+                    inngestEventId: "",
+                },
+            });
 
-            return workflow;
+            try {
+                const result = await sendWorkflowExecution({
+                    workflowId: input.id,
+                });
+
+                // Update execution with the actual inngest event ID
+                await prisma.execution.update({
+                    where: { id: execution.id },
+                    data: { inngestEventId: result.ids[0] },
+                });
+            } catch (error) {
+                // If sending to inngest fails, delete the execution
+                await prisma.execution.delete({
+                    where: { id: execution.id },
+                });
+                throw error;
+            }
+
+            return {
+                workflow,
+                executionId: execution.id,
+            };
 
         }),
 

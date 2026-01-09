@@ -157,7 +157,7 @@ export const SupabaseDialog = ({
                             } catch (err) {
                                 toast.error('Could not copy SQL to clipboard');
                             }
-                        }}>Copy SQL for SQL editor</Button>
+                        }} variant="link">Copy SQL for SQL editor</Button>
                     </div>
                     <Form {...form}>
                         <form
@@ -244,9 +244,10 @@ export const SupabaseDialog = ({
                                     <div className="text-sm text-muted-foreground">For each column, provide a static value or a handlebars expression (e.g. <code>{'{{prevNode.someField}}'}</code>).</div>
                                 </div>
                                 {columns.map((col) => (
-                                    <div key={col.name} className="flex">
-                                        <div className="col-span-5">
+                                    <div key={col.name} className="flex w-full">
+                                        <div className="col-span-5 w-full p-1">
                                             <FormField
+
                                                 control={form.control}
                                                 name="mapping"
                                                 render={() => {
@@ -285,7 +286,7 @@ export const SupabaseDialog = ({
                     </Form>
                 </ScrollArea>
 
-                <DialogFooter className="mt-4">
+                <DialogFooter className="mt-2">
                     <Button type="submit" form="supabase-node-dialog-form">Save</Button>
                 </DialogFooter>
 
