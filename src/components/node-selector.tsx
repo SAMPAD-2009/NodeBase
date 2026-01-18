@@ -2,7 +2,7 @@
 
 import { createId } from "@paralleldrive/cuid2";
 import { useReactFlow } from "@xyflow/react";
-import { GlobeIcon, MousePointerIcon } from "lucide-react";
+import { Code2Icon, GlobeIcon, ImageIcon, MousePointerIcon, GitMergeIcon } from "lucide-react";
 import React, { useCallback } from "react";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "./ui/sheet";
@@ -85,6 +85,24 @@ const executionNodes: NodeTypeOption[] = [
         label: "Supabase",
         description: "Use the Supabase DB",
         icon: "/supabase.svg",
+    },
+    {
+        type: NodeType.CHEERIO_EXTRACTOR,
+        label: "Cheerio Extractor",
+        description: "Extract HTML content using CSS selectors",
+        icon: Code2Icon,
+    },
+    {
+        type: NodeType.SCREENSHOT,
+        label: "Screenshot",
+        description: "Take a screenshot of a webpage",
+        icon: ImageIcon,
+    },
+    {
+        type: NodeType.JSON_FLATTENER,
+        label: "JSON Flattener",
+        description: "Restructure and rename JSON fields",
+        icon: GitMergeIcon,
     }
 ];
 

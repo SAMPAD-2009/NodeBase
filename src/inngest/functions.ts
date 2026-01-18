@@ -15,6 +15,9 @@ import { anthropicChannel } from "./channels/anthropic";
 import { cronTriggerChannel } from "./channels/cron";
 import { DiscordChannel } from "./channels/discord";
 import { supabaseChannel } from "./channels/supabase";
+import { cheerioChannel } from "./channels/cheerio";
+import { screenshotChannel } from "./channels/screenshot";
+import { jsonFlattenerChannel } from "./channels/json-flattener";
 
 
 
@@ -53,6 +56,9 @@ export const executeWorkflow = inngest.createFunction(
     cronTriggerChannel(),
     DiscordChannel(),
     supabaseChannel(),
+    cheerioChannel(),
+    screenshotChannel(),
+    jsonFlattenerChannel(),
   ],
 },
   async ({ event, step, publish }) => {

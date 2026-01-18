@@ -51,6 +51,11 @@ const credentialTypeoptions = [
         value: CredentialType.SUPABASE,
         label: "Supabase",
         logo: "/supabase.svg",
+    },
+    {
+        value: CredentialType.APIFLASH_KEY,
+        label: "APIFlash",
+        logo: "/apiflash.svg",
     }
 ];
 export const credentialLogos: Record<CredentialType, string> = {
@@ -58,7 +63,8 @@ export const credentialLogos: Record<CredentialType, string> = {
     [CredentialType.ANTHROPIC]: "/anthropic.svg",
     [CredentialType.OPENAI]: "/openai.svg",
     [CredentialType.CRON]: "/cron.svg",
-    [CredentialType.SUPABASE]: "/supabase.svg"
+    [CredentialType.SUPABASE]: "/supabase.svg",
+    [CredentialType.APIFLASH_KEY]: "/apiflash.svg"
 }
 
 interface credentialFormProps {

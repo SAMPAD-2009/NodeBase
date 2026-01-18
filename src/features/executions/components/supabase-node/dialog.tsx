@@ -287,7 +287,7 @@ export const SupabaseDialog = ({
                 </ScrollArea>
 
                 <DialogFooter className="mt-2">
-                    <Button type="submit" form="supabase-node-dialog-form">Save</Button>
+                    <Button type="submit" form="supabase-node-dialog-form" className="w-full">Save</Button>
                 </DialogFooter>
 
             </DialogContent>

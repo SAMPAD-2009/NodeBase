@@ -10,6 +10,9 @@ import { anthropicExecuter } from "../components/Anthropic/executer";
 import { discordExecuter } from "../components/discord/executer";
 import { slackExecuter } from "../components/slack/executer";
 import { supabaseExecuter } from "../components/supabase-node/executer";
+import { cheerioExecuter } from "../components/cheerio/executer";
+import { screenshotExecuter } from "../components/screenshot/executer";
+import { jsonFlattenerExecuter } from "../components/json-flattener/executer";
 
 export const executorRegistry: Record<NodeType, NodeExecuter> = {
   [NodeType.MANUAL_TRIGGER] : manualTriggerExecuter,
@@ -24,6 +27,9 @@ export const executorRegistry: Record<NodeType, NodeExecuter> = {
   [NodeType.DISCORD]:discordExecuter,
   [NodeType.SLACK]:slackExecuter,
   [NodeType.SUPABASE]:supabaseExecuter,
+  [NodeType.CHEERIO_EXTRACTOR]:cheerioExecuter,
+  [NodeType.SCREENSHOT]:screenshotExecuter,
+  [NodeType.JSON_FLATTENER]:jsonFlattenerExecuter,
 };
 
 export const getExecutor = (type:NodeType):NodeExecuter => {

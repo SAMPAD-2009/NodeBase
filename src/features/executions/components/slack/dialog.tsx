@@ -161,7 +161,7 @@ export const SlackDialog = ({
                     </Form>
                 </ScrollArea>
                 <DialogFooter className="mt-4">
-                    <Button type="submit" form="http-request-dialog-form">Save</Button>
+                    <Button type="submit" form="http-request-dialog-form" className="w-full">Save</Button>
                 </DialogFooter>
 
             </DialogContent>

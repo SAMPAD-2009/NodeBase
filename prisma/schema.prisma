@@ -101,6 +101,7 @@ enum CredentialType {
   OPENAI
   CRON
   SUPABASE
+  APIFLASH_KEY
 }
 
 model Workflow {
@@ -130,6 +131,9 @@ enum NodeType {
   DISCORD
   SLACK
   SUPABASE
+  CHEERIO_EXTRACTOR
+  SCREENSHOT
+  JSON_FLATTENER
 }
 
 model Node {

@@ -6,6 +6,9 @@ import { HttpRequestNode } from "@/features/executions/components/http-request/n
 import { OpenaiNode } from "@/features/executions/components/Open-ai/node";
 import { SlackNode } from "@/features/executions/components/slack/node";
 import { SupabaseNode } from "@/features/executions/components/supabase-node/node";
+import { CheerioNode } from "@/features/executions/components/cheerio/node";
+import { ScreenshotNode } from "@/features/executions/components/screenshot/node";
+import { JsonFlattenerNode } from "@/features/executions/components/json-flattener/node";
 import { CronTriggerNode } from "@/features/triggers/components/cron/node";
 import { GoogleFormTrigger } from "@/features/triggers/components/google form trigger/node";
 import { ManualTriggerNode } from "@/features/triggers/components/manual-trigger/node";
@@ -28,6 +31,9 @@ export const nodeComponents = {
     [NodeType.DISCORD]: DiscordNode,
     [NodeType.SLACK]: SlackNode,
     [NodeType.SUPABASE]: SupabaseNode,
+    [NodeType.CHEERIO_EXTRACTOR]: CheerioNode,
+    [NodeType.SCREENSHOT]: ScreenshotNode,
+    [NodeType.JSON_FLATTENER]: JsonFlattenerNode,
 } as const satisfies NodeTypes;
 
 export type RegisteredNodeType = keyof typeof nodeComponents;
